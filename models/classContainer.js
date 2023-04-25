@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const classContainerSchema = new Schema({
+  id: {
+    type: String,
+    required: true
+  },
   teacher: {
     type: String,
     required: true

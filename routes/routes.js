@@ -161,4 +161,38 @@ router.get('/students/:id/responses', async (req, res) => {
     return userInfo?.[questionId];
   }
   
+  router.get('/students/:studentId/classes', async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      const user = await User.findById(studentId).exec();
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+  
+      if (user.isTeacher) {
+        return res.status(400).send('User is a teacher');
+      }
+  
+      const classContainers = await ClassContainer.find({
+        students: studentId,
+      })
+        .populate('polls')
+        .exec();
+  
+      const classes = classContainers.map((classContainer) => ({
+        id: classContainer.id,
+        teacher: classContainer.teacher,
+        polls: classContainer.polls.map((poll) => ({
+          id: poll.id,
+        })),
+      }));
+  
+      res.json(classes);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
+
 module.exports = router;
