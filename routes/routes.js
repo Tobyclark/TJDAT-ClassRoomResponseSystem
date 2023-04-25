@@ -195,4 +195,72 @@ router.get('/students/:id/responses', async (req, res) => {
     }
   });
 
+  router.get('/students/:studentId/class-stats', async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      const user = await User.findById(studentId).exec();
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+  
+      if (user.isTeacher) {
+        return res.status(400).send('User is a teacher');
+      }
+  
+      const classContainers = await ClassContainer.find({
+        students: studentId,
+      })
+        .populate({
+          path: 'polls',
+          populate: {
+            path: 'questions',
+            populate: {
+              path: 'correctAnswerIndexes',
+            },
+          },
+        })
+        .exec();
+  
+      const classStats = classContainers.map((classContainer) => {
+        const correctAnswers = [];
+        const incorrectAnswers = [];
+  
+        classContainer.polls.forEach((poll) => {
+          poll.questions.forEach((question) => {
+            const selectedAnswers = question.selectedAnswers.get(studentId);
+  
+            if (selectedAnswers) {
+              const correctAnswerIndexes = question.correctAnswerIndexes.map(
+                String
+              );
+              const isCorrect =
+                correctAnswerIndexes.length === selectedAnswers.length &&
+                correctAnswerIndexes.every((index) =>
+                  selectedAnswers.includes(index)
+                );
+  
+              if (isCorrect) {
+                correctAnswers.push(question.id);
+              } else {
+                incorrectAnswers.push(question.id);
+              }
+            }
+          });
+        });
+  
+        return {
+          classId: classContainer.id,
+          correctAnswers: correctAnswers.length,
+          incorrectAnswers: incorrectAnswers.length,
+        };
+      });
+  
+      res.json(classStats);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
+  
 module.exports = router;
