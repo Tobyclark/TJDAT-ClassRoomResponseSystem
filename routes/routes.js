@@ -65,7 +65,7 @@ router.post('/polls/:pollId/questions', async (req, res) => {
   }
 });
 
-/*// Route that gets the number of correct and incorrect responses for a student
+// Route that gets the number of correct and incorrect responses for a student
 router.get('/students/:id/responses', async (req, res) => {
     try {
       const student = await Student.findById(req.params.id);
@@ -97,6 +97,66 @@ router.get('/students/:id/responses', async (req, res) => {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
-  });*/
+  });
+  
+  router.get('/students/:studentId/polls/:pollId', async (req, res) => {
+    try {
+      const { studentId, pollId } = req.params;
+      const classContainer = await ClassContainer.findOne({
+        students: studentId,
+        polls: pollId,
+      })
+        .populate({
+          path: 'polls',
+          select: 'questions',
+          populate: {
+            path: 'questions',
+            select: 'correctAnswerIndexes',
+          },
+        })
+        .exec();
+  
+      if (!classContainer) {
+        return res.status(404).send('Class container not found');
+      }
+  
+      const poll = classContainer.polls.find((p) => p.id === pollId);
+  
+      if (!poll) {
+        return res.status(404).send('Poll not found');
+      }
+  
+      let correctAnswers = 0;
+      let incorrectAnswers = 0;
+  
+      for (const question of poll.questions) {
+        const userAnswer = await getUserAnswer(studentId, question.id);
+        if (!userAnswer) {
+          continue;
+        }
+  
+        const isCorrect =
+          question.correctAnswerIndexes &&
+          question.correctAnswerIndexes.includes(userAnswer.answerIndex);
+  
+        if (isCorrect) {
+          correctAnswers++;
+        } else {
+          incorrectAnswers++;
+        }
+      }
+  
+      res.json({ correctAnswers, incorrectAnswers });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
+  
+  async function getUserAnswer(studentId, questionId) {
+    const UserInfo = mongoose.model(`UserInfo-${questionId}`, UserInfoSchemma);
+    const userInfo = await UserInfo.findOne({ _mapId: studentId }).exec();
+    return userInfo?.[questionId];
+  }
   
 module.exports = router;
