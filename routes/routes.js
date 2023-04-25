@@ -3,6 +3,8 @@ const router = express.Router();
 const ClassContainer = require('../models/classContainer');
 const Poll = require('../models/poll');
 const Question = require('../models/question');
+const User = require('../models/User');
+const UserInfo = require('../models/UserInfo');
 
 // Add a new class container
 router.post('/classes', async (req, res) => {
