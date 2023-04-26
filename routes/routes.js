@@ -67,7 +67,7 @@ router.post('/polls/:pollId/questions', async (req, res) => {
   }
 });
 
-/*// Route that gets the number of correct and incorrect responses for a student
+// Route that gets the number of correct and incorrect responses for a student
 router.get('/students/:id/responses', async (req, res) => {
     try {
       const student = await Student.findById(req.params.id);
@@ -99,6 +99,168 @@ router.get('/students/:id/responses', async (req, res) => {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
-  });*/
+  });
+  
+  router.get('/students/:studentId/polls/:pollId', async (req, res) => {
+    try {
+      const { studentId, pollId } = req.params;
+      const classContainer = await ClassContainer.findOne({
+        students: studentId,
+        polls: pollId,
+      })
+        .populate({
+          path: 'polls',
+          select: 'questions',
+          populate: {
+            path: 'questions',
+            select: 'correctAnswerIndexes',
+          },
+        })
+        .exec();
+  
+      if (!classContainer) {
+        return res.status(404).send('Class container not found');
+      }
+  
+      const poll = classContainer.polls.find((p) => p.id === pollId);
+  
+      if (!poll) {
+        return res.status(404).send('Poll not found');
+      }
+  
+      let correctAnswers = 0;
+      let incorrectAnswers = 0;
+  
+      for (const question of poll.questions) {
+        const userAnswer = await getUserAnswer(studentId, question.id);
+        if (!userAnswer) {
+          continue;
+        }
+  
+        const isCorrect =
+          question.correctAnswerIndexes &&
+          question.correctAnswerIndexes.includes(userAnswer.answerIndex);
+  
+        if (isCorrect) {
+          correctAnswers++;
+        } else {
+          incorrectAnswers++;
+        }
+      }
+  
+      res.json({ correctAnswers, incorrectAnswers });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
+  
+  async function getUserAnswer(studentId, questionId) {
+    const UserInfo = mongoose.model(`UserInfo-${questionId}`, UserInfoSchemma);
+    const userInfo = await UserInfo.findOne({ _mapId: studentId }).exec();
+    return userInfo?.[questionId];
+  }
+  
+  router.get('/students/:studentId/classes', async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      const user = await User.findById(studentId).exec();
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+  
+      if (user.isTeacher) {
+        return res.status(400).send('User is a teacher');
+      }
+  
+      const classContainers = await ClassContainer.find({
+        students: studentId,
+      })
+        .populate('polls')
+        .exec();
+  
+      const classes = classContainers.map((classContainer) => ({
+        id: classContainer.id,
+        teacher: classContainer.teacher,
+        polls: classContainer.polls.map((poll) => ({
+          id: poll.id,
+        })),
+      }));
+  
+      res.json(classes);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
+
+  router.get('/students/:studentId/class-stats', async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      const user = await User.findById(studentId).exec();
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+  
+      if (user.isTeacher) {
+        return res.status(400).send('User is a teacher');
+      }
+  
+      const classContainers = await ClassContainer.find({
+        students: studentId,
+      })
+        .populate({
+          path: 'polls',
+          populate: {
+            path: 'questions',
+            populate: {
+              path: 'correctAnswerIndexes',
+            },
+          },
+        })
+        .exec();
+  
+      const classStats = classContainers.map((classContainer) => {
+        const correctAnswers = [];
+        const incorrectAnswers = [];
+  
+        classContainer.polls.forEach((poll) => {
+          poll.questions.forEach((question) => {
+            const selectedAnswers = question.selectedAnswers.get(studentId);
+  
+            if (selectedAnswers) {
+              const correctAnswerIndexes = question.correctAnswerIndexes.map(
+                String
+              );
+              const isCorrect =
+                correctAnswerIndexes.length === selectedAnswers.length &&
+                correctAnswerIndexes.every((index) =>
+                  selectedAnswers.includes(index)
+                );
+  
+              if (isCorrect) {
+                correctAnswers.push(question.id);
+              } else {
+                incorrectAnswers.push(question.id);
+              }
+            }
+          });
+        });
+  
+        return {
+          classId: classContainer.id,
+          correctAnswers: correctAnswers.length,
+          incorrectAnswers: incorrectAnswers.length,
+        };
+      });
+  
+      res.json(classStats);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal server error');
+    }
+  });
   
 module.exports = router;
