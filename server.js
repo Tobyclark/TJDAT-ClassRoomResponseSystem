@@ -78,18 +78,18 @@ app.get('/', checkAuthenticated, async (req, res) => {
     });
 })
 
-app.get('student-class')
+app.get('student-class', (req, res) =>
 {
   //find class that student is in and inputed, pass in the class info
-  res.render('student-class.ejs', {questions: })
-}
+  res.render('student-class.ejs', {questions: req.class.questions});
+});
 
 app.post('/', checkAuthenticated, async (req, res, next) => {
     
 });
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
+    res.render('login.ejs');
 })
 
 app.post('/login', checkNotAuthenticated, async (req, res, next) => {
