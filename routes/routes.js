@@ -6,6 +6,13 @@ const Question = require('../models/question');
 const User = require('../models/User');
 const UserInfo = require('../models/UserInfo');
 
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Mothods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
+  res.header("ACCESS-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Login a user
 router.get('/login/:username/:password', async (req, res) => {
   try {
