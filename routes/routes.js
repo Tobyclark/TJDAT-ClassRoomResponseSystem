@@ -6,6 +6,40 @@ const Question = require('../models/question');
 const User = require('../models/User');
 const UserInfo = require('../models/UserInfo');
 
+// Login a user
+router.get('/login/:username/:password', async (req, res) => {
+  try {
+    const user = await UserInfo.findById(req.params.username); // Get the info from the Database
+    if (!user) { // If we could not find a user send back an error
+      return res.status(404).json({ error: 'Incorrect Username' });
+    }
+    if (user.password != req.params.password) {
+      return res.status(404).json({error: 'Incorrect Password'});
+    }
+    res.json(user);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+// Register a user
+router.post('/register/:username/:password/:isTeacher', async (req, res) => {
+  try {
+    const user = await UserInfo.findById(req,params.username);
+    if (user) { // User already exists in the database
+      return res.status(404).json({error: 'Username is taken'});
+    }
+    const newUser = new User({username: req.params.username, password: req.params.password, isTeacher: req.params.isTeacher});
+    await UserInfo._mapId.push(newUser);
+    await UserInfo.save();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
 // Add a new class container
 router.post('/classes', async (req, res) => {
   try {

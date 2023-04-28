@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     },
     ClassList: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: false
     }
 });
 
