@@ -1,0 +1,84 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />
+    <script>
+        const role = '<%= role %>'
+    </script>
+
+    <script src="/public/js/main.js"></script>
+</head>
+
+<nav>
+    <div class="toolbar">
+        <div class="toolbar__name">
+            <h1>||<%= name %>||</h1> 
+        </div>
+        <div class="toolbar__button">
+            <form>
+                <button id="linkClasses">Classes</button>
+            </form>
+        </div>
+        <div class="toolbar__button">
+            <button id="linkStats">Stats</button>
+        </div>
+        <div class="toolbar__button">
+            <form action="/logout?_method=DELETE" method="POST">
+                <button type="submit">Sign Out</button>
+            </form>
+        </div>
+        
+    </div>
+</nav>
+
+<body>
+    <div class="content">
+        <div class="content__box content__hidden" id="classes">
+            <div id="linkJoinClass" class="content__hidden">
+                <button class="content__button" id="linkJoinClassButton">Join a Class</button>
+            </div>
+            <div id="linkCreateClass" class="content__hidden">
+                <button class="content__button" id="linkCreateClassButton">Create a Class</button>
+            </div>
+            
+            <div>
+                <% classList.forEach(function(item) { %>
+                  <% if(item !== ',') { %>
+                    <form action="/view-class" method="POST">
+                      <input type="hidden" name="id" value="<%= id %>">
+                      <button class="classlist__button" type="submit" name="classID" value="<%= item %>"><%= item %></button>
+                    </form>
+                  <% } %>
+                <% }) %>
+            </div>
+            
+        </div>
+
+        <div class="content__box content__hidden" id="joinclass">
+            <form action="/join-class" method="POST">
+                <input type="hidden" name="id" value="<%= id %>">
+                <input class="form__input" autofocus placeholder="Class ID" id="classID" name="classID">
+                <button class="content__button" type="submit">Join</button>
+            </form>
+        </div>
+        
+        <div id="createClass" class="content__hidden">
+            <form action="/create-class" method="POST">
+                <input type="hidden" name="id" value="<%= id %>">
+                <input class="form__input" autofocus placeholder="Class ID" id="classID" name="classID">
+                <button class="content__button" type="submit">Create</button>
+            </form>
+        </div>
+
+        <div class="content__box content__hidden" id="stats">
+
+        </div>
+    </div>
+</body>
+
+
+
