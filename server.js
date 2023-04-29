@@ -17,8 +17,6 @@ const uri = "mongodb+srv://general:Bs6Lfell6HuhOB09@tjdatclassroomresponse.s9cp2
 
 const PORT = process.env.PORT || 3000;
 
-//const routes = require('./routes/routes.js');
-
 const client = new MongoClient(uri, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -50,7 +48,6 @@ initializePassport(passport,
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
-//app.use('/', routes);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -66,15 +63,14 @@ app.use(passport.session())
 app.use(methodOverride('_method'))
 
 app.get('/', checkAuthenticated, async (req, res) => {
-    
-    //console.log("Session:", req.session.passport.user);
     user = await collection.findOne({ id: req.session.passport.user });
-    //console.log('User:', user); 
     res.render('index.ejs', {
       id: user.id,
       name: user.name,
       role: user.isTeacher,
-      classList: user.classList
+      classList: user.classList,
+      correctAnswers: user.correctAnswers,
+      incorrectAnswers: user.incorrectAnswers
     });
 })
 
@@ -102,7 +98,6 @@ app.post('/login', checkNotAuthenticated, async (req, res, next) => {
             return next(err);
           }
             console.log('User:', user);
-            //res.redirect(`/?id=${user.id}&name=${user.name}&role=${user.isTeacher}&classList=${user.classList}`);
             res.redirect('/');
       });
       } else {
@@ -150,17 +145,17 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return next()
+        return next();
     }
-    res.redirect('/login')
+    res.redirect('/login');
 }
 
 app.delete('/logout', (req, res) => {
     req.logOut((err) => {
         if(err) {
-            return next(err)
+            return next(err);
         }
-        res.redirect('/login')
+        res.redirect('/login');
     })
 })
 
@@ -168,16 +163,12 @@ app.post('/join-class', async (req, res) => {
     classID = req.body.classID;
     master = await collection.findOne({type: "masterlist"});
     masterlist = master.class
-    //masterlist = master.classes;
-    //masterlist_str = masterlist.join(',');
     const user = await collection.findOne({ id: req.body.id });
     user_classList = user.classList;
     user_classlist_str = user.classList.join(',')
 
     // Check if classID (submitted by student user) is in masterlist, if so, add it to their classList in database, if not, dont.
-    //masterlist_str.includes(classID)
     if ((classID in masterlist) && !user_classlist_str.includes(classID)) {
-      //console.log(`ADD IT TO THE USER`);
       user_classList.push(classID);
       const filter = { id: user.id };
       const updateDoc = {
@@ -191,8 +182,6 @@ app.post('/join-class', async (req, res) => {
       console.log(`DO NOT ADD IT TO THE USER`);
     }
 
-    
-    //res.redirect(`/?id=${user.id}&name=${user.name}&role=${user.isTeacher}&classList=${user.classList}`);
     res.redirect('/');
 });
 
@@ -200,16 +189,12 @@ app.post('/create-class', async (req, res) => {
     classID = req.body.classID;
     master = await collection.findOne({type: "masterlist"});
     masterlist = master.class;
-    //masterlist = master.classes;
-    //masterlist_str = masterlist.join(',');
     const user = await collection.findOne({ id: req.body.id });
     user_classList = user.classList;
-    user_classlist_str = user.classList.join(',')
+    user_classlist_str = user.classList.join(',');
 
     // Check if classID (submitted by teacher user) is in masterlist, if not, add it to their classList and masterlist in database, if not, dont.
-    //!masterlist_str.includes(classID)
     if (!(classID in masterlist) && !user_classlist_str.includes(classID)) {
-      //console.log(`ADD IT TO THE USER`);
       user_classList.push(classID);
       const filter1 = { id: user.id };
       const updateDoc1 = {
@@ -219,7 +204,6 @@ app.post('/create-class', async (req, res) => {
       };
       const result1 = await collection.updateOne(filter1, updateDoc1, { upsert: true })
       //Add it to the masterlist
-      //masterlist.push(classID);
       masterlist[classID] = []; // Adds an empty list at the classID
       const filter2 = {type: master.type};
       const updateDoc2 = {
@@ -227,7 +211,7 @@ app.post('/create-class', async (req, res) => {
           class: masterlist
         },
       };
-      const result2 = await collection.updateOne(filter2, updateDoc2, { upsert: true })
+      const result2 = await collection.updateOne(filter2, updateDoc2, { upsert: true });
     }
     res.redirect('/');
 });
@@ -298,11 +282,11 @@ app.post('/view-class', async (req, res) => {
   const user = await collection.findOne({ id: req.body.id });
   if(user.isTeacher === "false")
   {
-    res.render("/student-class");
+    res.redirect('/student-class');
   } else {
-    res.render("/teacher-class");
+    res.render('/teacher-class.ejs');
   }
-})
+});
 
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
