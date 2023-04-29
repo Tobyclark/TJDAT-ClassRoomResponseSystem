@@ -1,0 +1,57 @@
+<!DOCTYPE html>           
+
+<html>    
+
+  <script>
+    const questions = '<%= questions %>'
+  </script>  
+
+  <head>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />               
+    <title>Quiz Subpage</title> 
+    
+  </head>
+
+  <body>                
+    <h1>quiz subpage</h1>  
+    
+    <p>welcome to da quiz! Please answer the following questions, monkeys: </p> 
+    
+    <form>                 <!-- Start a form element -->
+      <div>
+        <% questions.forEach(function(item) { %>
+          <% if(item !== ',') { %>
+
+            <p> <%= item.questions %> </p>   
+
+            <label> Ans 1:</label>
+            <input> type="radio" name="q1" value= false required>
+            <label> <%= item.answers[0]%> </label>
+            <label> Ans 2:</label>
+            <input> type="radio" name="q2" value= false required>
+            <label> <%= item.answers[1]%> </label>
+            <label> Ans 3:</label>
+            <input> type="radio" name="q3" value= false required>
+            <label> <%= item.answers[2]%> </label>
+            <label> Ans 4:</label>
+            <input> type="radio" name="q4" value= false required>
+            <label> <%= item.answers[3]%> </label>
+  
+          <% } %>
+        <% }) %>
+
+        <button class="questionList__button" type="submit" </button>
+    </div>
+      
+    <p> <%= questions%> </p>
+      
+    </form>              
+    
+  </body>    
+  
+</html>
