@@ -216,14 +216,7 @@ app.post('/create-class', async (req, res) => {
     res.redirect('/');
 });
 
-app.get('/student-class', async (req, res) =>
-{
-  //find class that student is in and inputed, pass in the class info
-  master = await collection.findOne({type: "masterlist"});
-  masterlist = master.class;
-  classID = req.body.classID;
-  res.render('student-class.ejs', {questions: masterlist[classID]});
-});
+
 
 app.post('/create-question', async (req, res) => {
   classID = req.body.classID;
@@ -278,13 +271,16 @@ app.post('/view-class', async (req, res) => {
   //user id and class id have been passed in
   //depending on structure, can either send teacher to a manage class(poll) page or 
   //student to participate(?) page
-  classname = req.body.classID;
   const user = await collection.findOne({ id: req.body.id });
   if(user.isTeacher === false)
   {
-    res.redirect('/student-class');
+    //res.redirect('/student-class', {classID: classname});
+    master = await collection.findOne({type: "masterlist"});
+    masterlist = master.class;
+    classID = req.body.classID;
+    res.render('student-class.ejs', {questions: masterlist[classID]});
   } else {
-    res.render('/teacher-class.ejs', {classID: classname});
+    res.render('/teacher-class.ejs');
   }
 });
 
