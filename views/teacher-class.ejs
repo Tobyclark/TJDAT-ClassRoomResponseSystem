@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />
+    <title>Manage Questions</title> 
+  </head>
+  <body>
+
+    
+    <!-- Form to add a new question -->
+    <form action = "/create-question" class = "form__input" method = "POST" >
+      
+
+      
+      <input class="form__input" autofocus placeholder="Question"name="Question" required>
+
+      <input class="form__input" autofocus placeholder="Option 1"name="Option1" required>
+      <input class="form__input" autofocus placeholder="Option 2"name="Option2" required>
+      <input class="form__input" autofocus placeholder="Option 3"name="Option3" required>
+      <input class="form__input" autofocus placeholder="Option 4"name="Option4" required>
+
+
+      <%= const options = ['Option1', 'Option2', 'Option3', 'Option4']; %>
+
+
+  
+
+
+      <!-- select one right ans -->
+        <br>
+        <p> Select the correct answer</p>
+        <input type="radio" id="option1" name="correct" value="0">
+        <label for="option1">Option 1</label> 
+        <br>
+        <input type="radio" id="option2" name="correct" value="1">
+        <label for="option2">Option 2</label> 
+        <br>
+        <input type="radio" id="option3" name="correct" value="2">
+        <label for="option3">Option 3</label> 
+        <br>
+        <input type="radio" id="option4" name="correct" value="3">
+        <label for="option4">Option 4</label> 
+        <br>
+        <hr>
+
+        <input type="hidden" name="classID" value="<%= classID %>">
+        <input type="hidden" name="answers" value="<%= options %>">
+        
+        <button class="form__button" type="submit"> Add Question  </button>
+  
+  </form>
