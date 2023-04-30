@@ -242,31 +242,41 @@ res.redirect('/');
 
 app.post('/answer-question', async (req, res) => {
 classID = req.body.classID; // Key for the class
-question = req.body.question; // Index of the question
-answer = req.body.answer; // Index of the answer
-master = await collection.findOne({type: "masterlist"});
+master = await collection.findOne({type: "masterlist"})
 masterlist = master.class;
+classinfo = masterlist[classID]
+console.log(classinfo);
 user = await collection.findOne({id: req.body.id});
+question = 0;
+numberCorrect = user.correctAnswers;
+numberIncorrect = user.incorrectAnswers;
 
-if (classID in masterlist && user) {
-  numberCorrect = user.correctAnswers;
-  numberIncorrect = user.incorrectAnswers;
-  if (masterlist[classID][question]["correct"] === answer) {
-    numberCorrect++;
-  }
-  else {
-    numberIncorrect++;
-  }
-  const filter = { id: user.id };
-    const updateDoc = {
-      $set: {
-        correctAnswers: numberCorrect,
-        incorrectAnswers: numberIncorrect,
-      },
-    };
-  const result = await collection.updateOne(filter, updateDoc, {upsert: true});
-}
+classinfo.forEach(element => {
+    // Question text
+    question_name = element.question
+    // Index of answer they chose
+    answer = req.body.question_name
 
+      if (masterlist[classID][question]["correct"] === answer) {
+        numberCorrect++;
+      }
+      else {
+        numberIncorrect++;
+      }
+
+    question++;
+});
+
+const filter = { id: user.id };
+        const updateDoc = {
+          $set: {
+            correctAnswers: numberCorrect,
+            incorrectAnswers: numberIncorrect,
+          },
+        };
+      const result = await collection.updateOne(filter, updateDoc, {upsert: true});
+
+res.redirect('/');
 });
 
 app.post('/view-class', async (req, res) => {
