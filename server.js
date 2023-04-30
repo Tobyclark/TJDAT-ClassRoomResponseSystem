@@ -226,7 +226,7 @@ if (classID in masterlist) {
   masterlist[classID].push({ 
     question: req.body.question, 
     answers: [req.body.Option1, req.body.Option2, req.body.Option3, req.body.Option4], 
-    correct: req.body.correct 
+    correct: Number(req.body.correct) 
   });
   const filter = {type: master.type};
   const updateDoc = {
