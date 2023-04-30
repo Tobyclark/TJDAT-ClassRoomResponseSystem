@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="form__message form__message--error">
+            <% if (messages.error) { %>
+            <%= messages.error %>
+            <% } %>
+        </div>
+        <form action="/login" method="POST" class="form">
+            <h1 class="form__title">Sign In</h1>
+            <div class="form__input-group">
+                <label for="email"></label>
+                <input class="form__input" autofocus placeholder="Email" type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password"></label>
+                <input class="form__input" autofocus placeholder="Password" type="password" id="password" name="password" required>
+            </div>
+            <p class="form__text">
+                <a href="/register">Register</a>
+            </p>
+            <button class="form__button" type="submit">Sign in</button>
+        </form>
+
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+
+ 
+
+<!DOCTYPE html>           
+
+<html>    
+
+  <script>
+    const questions = '<%= questions %>'
+  </script>  
+
+  <head>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />               
+    <title>Quiz Subpage</title> 
+    
+  </head>
+
+
+  <body>                
+    
+    
+    <!-- <p>welcome to da quiz! Please answer the following questions: </p>  -->
+    
+    <form action="/answer-question" method="POST">
+                     
+      <div class = "form__input">
+        <h1> <%= classID %> Quiz </h1>  
+        
+        <% questions.forEach(function(item) { %>
+          <% if(item !== ',') { %>
+        
+            <p> <%= item.question %> </p>   
+            
+              <br>
+                <input type="radio" id="option1" name="<%=item.question%>" value="0" required>
+              <label for="<%=item.answers[0] %>"><%=item.answers[0] %></label> 
+              <br>
+              <input type="radio" id="option2" name="<%=item.question%>" value="1" required>
+              <label for="<%=item.answers[1] %>"><%=item.answers[1] %></label> 
+              <br>
+              <input type="radio" id="option3" name="<%=item.question%>" value="2" required>
+              <label for="<%=item.answers[2] %>"><%=item.answers[2] %></label> 
+              <br>
+              <input type="radio" id="option4" name="<%=item.question%>" value="3" required>
+              <label for="<%=item.answers[3] %>"><%=item.answers[3] %></label> 
+              <br>
+              <hr>
+          <% } %>
+        <% }) %>
+
+        <input type="hidden" name="id" value="<%= id %>">
+        <input type="hidden" name="classID" value="<%= classID %>">
+        <button class="form__button" type="submit"> Submit  </button>
+    </div>
+      
+    </form>              
+    
+  </body>    
+  
+</html>

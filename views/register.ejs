@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href= "/public/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="container">
+        <form action="/register" method="POST" class="form">
+            <h1 class="form__title">Register</h1>
+            <div class="form__input-group">
+                <label for="name"></label>
+                <input class="form__input" autofocus placeholder="Name" type="text" id="name" name="name" required>
+            </div>
+            <div class="form__input-group">
+                <label for="email"></label>
+                <input class="form__input" autofocus placeholder="Email" type="email" id="email" name="email" required>
+            </div>
+            <div class="form__input-group">
+                <label for="password"></label>
+                <input class="form__input" autofocus placeholder="Password" type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form__input-group">
+                <label for="role">Select Role:</label>
+                <input type="radio" name="role" value= false id="student" required>
+                <label for="student">Student</label>
+                <input type="radio" name="role" value= true id="teacher">
+                <label for="teacher">Teacher</label>
+            </div>
+            
+
+            <p class="form__text">
+                <a href="/login">Login</a>
+            </p>
+            <button class="form__button" type="submit">Continue</button>
+        </form>
+    </div>
+</body>
+
+</html>
