@@ -17,38 +17,53 @@
     
   </head>
 
+
   <body>                
-    <h1>quiz subpage</h1>  
     
-    <p>welcome to da quiz! Please answer the following questions, monkeys: </p> 
     
-    <form>                 <!-- Start a form element -->
-      <div>
+    <!-- <p>welcome to da quiz! Please answer the following questions: </p>  -->
+    
+    <form action="/answer-question" method="POST">
+                     
+      <div class = "form__input">
+        <h1> <%= classID %> Quiz </h1>  
+        
         <% questions.forEach(function(item) { %>
           <% if(item !== ',') { %>
 
-            <p> <%= item.questions %> </p>   
+        
+            <p> <%= item.question %> </p>   
+                
+            <label> Ans 1: <%=item.answers[0] %> </label> <br>
+            <label> Ans 2: <%=item.answers[1] %></label>  <br>
+            <label> Ans 3: <%=item.answers[2] %></label> <br>
+            <label> Ans 4: <%=item.answers[3] %></label> <br>
 
-            <label> Ans 1:</label>
-            <input> type="radio" name="q1" value= false required>
-            <label> <%= item.answers[0]%> </label>
-            <label> Ans 2:</label>
-            <input> type="radio" name="q2" value= false required>
-            <label> <%= item.answers[1]%> </label>
-            <label> Ans 3:</label>
-            <input> type="radio" name="q3" value= false required>
-            <label> <%= item.answers[2]%> </label>
-            <label> Ans 4:</label>
-            <input> type="radio" name="q4" value= false required>
-            <label> <%= item.answers[3]%> </label>
-  
+            <form>
+              <br>
+              <input type="radio" id="option1" name="<%=item.question%>" value="1">
+              <label for="option1">Option 1</label> 
+              <br>
+              <input type="radio" id="option2" name="<%=item.question%>" value="2">
+              <label for="option2">Option 2</label> 
+              <br>
+              <input type="radio" id="option3" name="<%=item.question%>" value="3">
+              <label for="option3">Option 3</label> 
+              <br>
+              <input type="radio" id="option4" name="<%=item.question%>" value="4">
+              <label for="option4">Option 4</label> 
+              <br>
+              <hr>
+            
+            </form>
+            
           <% } %>
+
         <% }) %>
 
-        <button class="questionList__button" type="submit" </button>
+        <input type="hidden" name="classID" value="<%= classID %>">
+        <button class="form__button" type="submit"> Submit  </button>
     </div>
-      
-    <p> <%= questions%> </p>
       
     </form>              
     
