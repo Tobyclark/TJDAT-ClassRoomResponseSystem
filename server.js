@@ -236,7 +236,9 @@ if (classID in masterlist) {
   };
   const result = await collection.updateOne(filter, updateDoc, { upsert: true });
 }
+res.redirect('/');
 });
+
 
 app.post('/answer-question', async (req, res) => {
 classID = req.body.classID; // Key for the class
@@ -280,7 +282,9 @@ if(user.isTeacher === false)
   classID = req.body.classID;
   res.render('student-class.ejs', {questions: masterlist[classID], classID: classID});
 } else {
-  res.render('/teacher-class.ejs');
+
+  classID = req.body.classID;
+  res.render('teacher-class.ejs', {classID: classID});
 }
 });
 
