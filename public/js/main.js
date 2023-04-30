@@ -2,10 +2,17 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     const classes = document.querySelector("#classes")
     const stats = document.querySelector("#stats")
+    const statsButton = document.querySelector("#linkStats")
     const joinButton = document.querySelector("#linkJoinClass")
     const createButton = document.querySelector("#linkCreateClass")
     const createClass = document.querySelector("#createClass")
     const joinclass = document.querySelector("#joinclass")
+    
+
+    if(role === "false")
+    {
+        statsButton.classList.remove("content__hidden");
+    }
 
     document.querySelector("#linkClasses").addEventListener("click", e => {
         e.preventDefault();
